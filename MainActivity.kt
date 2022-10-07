@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     object : ScanCallback() {
         override fun onScanFailed(errorCode: Int) {
             super.onScanFailed(errorCode)
-            Log.d("scanCallback", "BLE Scan Failed : " + errorCode)
+            Log.d("scanCallback", "BLE Scan Failed : $errorCode")
         }
 
         override fun onBatchScanResults(results: MutableList<ScanResult>?) {
@@ -49,7 +49,11 @@ class MainActivity : AppCompatActivity() {
             results?.let{
                 // results is not null
                 for (result in it){
-                    if (!devicesArr.contains(result.device) && result.device.name!=null) devicesArr.add(result.device)
+                    try{
+                        if (!devicesArr.contains(result.device) && result.device.name!=null) devicesArr.add(result.device)
+                    } catch(e : SecurityException){
+                        e.printStackTrace()
+                    }
                 }
 
             }
@@ -59,7 +63,11 @@ class MainActivity : AppCompatActivity() {
             super.onScanResult(callbackType, result)
             result?.let {
                 // result is not null
-                if (!devicesArr.contains(it.device) && it.device.name!=null) devicesArr.add(it.device)
+               try{
+                   if (!devicesArr.contains(it.device) && it.device.name!=null) devicesArr.add(it.device)
+               }catch(e: SecurityException){
+                   e.printStackTrace()
+               }
                 recyclerViewAdapter.notifyDataSetChanged()
             }
         }
@@ -69,14 +77,26 @@ class MainActivity : AppCompatActivity() {
     private fun scanDevice(state:Boolean) = if(state){
         handler.postDelayed({
             scanning = false
-            bluetoothAdapter?.bluetoothLeScanner?.stopScan(mLeScanCallback)
+            try{
+                bluetoothAdapter?.bluetoothLeScanner?.stopScan(mLeScanCallback)
+            }catch(e: SecurityException){
+                e.printStackTrace()
+            }
         }, SCAN_PERIOD)
         scanning = true
         devicesArr.clear()
-        bluetoothAdapter?.bluetoothLeScanner?.startScan(mLeScanCallback)
+        try{
+            bluetoothAdapter?.bluetoothLeScanner?.startScan(mLeScanCallback)
+        }catch(e: SecurityException){
+            e.printStackTrace()
+        }
     }else{
         scanning = false
-        bluetoothAdapter?.bluetoothLeScanner?.stopScan(mLeScanCallback)
+        try{
+            bluetoothAdapter?.bluetoothLeScanner?.stopScan(mLeScanCallback)
+        }catch(e: SecurityException){
+            e.printStackTrace()
+        }
     }
 
     private fun hasPermissions(context: Context?, permissions: Array<String>): Boolean {
@@ -97,6 +117,7 @@ class MainActivity : AppCompatActivity() {
         permissions: Array<String?>,
         grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             REQUEST_ALL_PERMISSION -> {
                 // If request is cancelled, the result arrays are empty.
@@ -146,16 +167,24 @@ class MainActivity : AppCompatActivity() {
             scanDevice(true)
         }
     }
-    fun bluetoothOnOff(){
+    private fun bluetoothOnOff(){
         if (bluetoothAdapter == null) {
             // Device doesn't support Bluetooth
             Log.d("bluetoothAdapter","Device doesn't support Bluetooth")
         }else{
             if (bluetoothAdapter?.isEnabled == false) { // 블루투스 꺼져 있으면 블루투스 활성화
                 val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+                try{
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+                }catch(e: SecurityException){
+                    e.printStackTrace()
+                }
             } else{ // 블루투스 켜져있으면 블루투스 비활성화
-                bluetoothAdapter?.disable()
+                try{
+                    bluetoothAdapter?.disable()
+                }catch(e: SecurityException){
+                    e.printStackTrace()
+                }
             }
         }
     }
@@ -176,7 +205,11 @@ class MainActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
             val itemName:TextView = holder.linearView.findViewById(R.id.item_name)
             val itemAddress:TextView = holder.linearView.findViewById(R.id.item_address)
-            itemName.text = myDataset[position].name
+            try{
+                itemName.text = myDataset[position].name
+            }catch(e: SecurityException){
+                e.printStackTrace()
+            }
             itemAddress.text = myDataset[position].address
         }
 
