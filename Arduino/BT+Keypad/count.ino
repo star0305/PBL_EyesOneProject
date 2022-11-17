@@ -110,16 +110,10 @@ void setup(){
   Serial.begin(9600);
   hc06.begin(9600);
   servo.attach(motor);   //서보 핀설정
-  servo.write(90);     //서보 초기각도 0도 설정
-  pinMode(1, OUTPUT); // 1번을 출력으로 설정
+  servo.write(90);     //서보 초기각도 90도 설정
 }
 
-void loop(){
-  digitalWrite(1, HGIH); // 1번 핀 상태를 HIGH로 설정하여 LED ON
-  delay_ms(500); // 500ms 시간 딜레이
-  digitalWrite(1, LOW); // 1번 핀 상태를 LOW로 설정하여 LED OFF
-  delay_ms(500); // 500ms 시간 딜레이
-        
+void loop(){  
   keypad1();
   bt();
   if((countbt>=1)&&(countkey>=1)){ //키패드, 블루투스 둘 다 성공시 서보작동
