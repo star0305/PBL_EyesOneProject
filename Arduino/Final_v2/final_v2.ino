@@ -41,7 +41,7 @@ void turn_right(){ //도어락 열림
   servo.write(180);
 }
 
-void succsess(){ //보안요구 만족시 5초간 문 개방 후 잠금
+void success(){ //보안요구 만족시 5초간 문 개방 후 잠금
   turn_right();
   Serial.println("open the door"); 
   countface=0; //얼굴인식 성공 횟수 초기화
