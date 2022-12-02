@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "401685806407",
+    "firebase_url": "https://eyesone-ce976-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "eyesone-ce976",
+    "storage_bucket": "eyesone-ce976.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:401685806407:android:97a0a1ccc714fde48d6062",
+        "android_client_info": {
+          "package_name": "com.example.ble_project9"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "401685806407-v8ruft6std6nskpn7l5ig7blu3518vgd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLNjnWdHdGEFeEuLWzFEuDVaZAjA6fUKU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "401685806407-v8ruft6std6nskpn7l5ig7blu3518vgd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
