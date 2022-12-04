@@ -12,9 +12,9 @@ const int motor = 11;
 int tru=0; //올바른 비밀번호 입력시 카운트
 int count=0; //비밀번호 입력시 카운트
 
-int countface=0; //얼굴인식 성공 횟수
-int countbt=0; //블루투스 성공횟수
-int countkey=0; //키패드 성공횟수
+int countface=0; //얼굴인 성공횟수
+int countbt=0; //블루투스성공횟수
+int countkey=0; //키패드성공횟수
 
 char pw[5]={'0', '0', '0', '0', '0'}; //비밀번호설정
 
@@ -44,9 +44,11 @@ void turn_right(){ //도어락 열림
 void success(){ //보안요구 만족시 5초간 문 개방 후 잠금
   turn_right();
   Serial.println("open the door"); 
-  countface=0; //얼굴인식 성공 횟수 초기화
+  countface=0; //얼굴인식 성공횟수 초기화
   countbt=0; //블루투스 성공횟수 초기화
   countkey=0; //키패드 성공횟수 초기화
+  tru=0; //카운트 초기화
+  count=0; //카운트 
   delay(5000);
   turn_left();
 }
@@ -68,6 +70,7 @@ void bt(){ //블루투스 입력 함수, 블루투스 신호중 알맞은 데이
   if(Blutooth.available()){
     Serial.write(Blutooth.read());
     data = Blutooth.read();
+    Serial.println(Blutooth.read());
     if(data=='a'){
       Serial.println("BT ok");
       countbt++;
