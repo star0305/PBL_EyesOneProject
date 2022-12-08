@@ -1,14 +1,18 @@
+//------------------------------------동작시 필요한 헤더
 #include <Keypad.h>
 #include <Servo.h>
 #include <SoftwareSerial.h>
 
+//------------------------------------블루투스 핀 정의 
 #define RX 12
 #define TX 13
 SoftwareSerial Blutooth(RX, TX);
 
+//---------------------------------서보 모터 정의 객체
 Servo servo;
 const int motor = 11;
 
+//------------------------------------보안요건 만족여부 카운트 객체
 int tru=0; //올바른 비밀번호 입력시 카운트
 int count=0; //비밀번호 입력시 카운트
 
@@ -16,6 +20,7 @@ int countface=0; //얼굴인 성공횟수
 int countbt=0; //블루투스성공횟수
 int countkey=0; //키패드성공횟수
 
+//------------------------------------키패드 객체 
 char pw[5]={'0', '0', '0', '0', '0'}; //비밀번호설정
 
 const byte ROWS = 4;
@@ -33,15 +38,19 @@ byte colpins[ROWS] = {5, 4, 3, 2};
 
 Keypad keypad = Keypad(makeKeymap(keys), rowpins, colpins, ROWS, COLS);
 
+//------------------------------------도어락 잠금
 void turn_left(){ //도어락 잠금
   servo.write(0);
 }
 
+//------------------------------------도어락 오픈 
 void turn_right(){ //도어락 열림
   servo.write(180);
 }
 
-void success(){ //보안요구 만족시 5초간 문 개방 후 잠금
+//------------------------------------보안요구 만족시 작동
+//보안요구 만족시 5초간 문 개방 후 잠금
+void success(){ 
   turn_right();
   Serial.println("open the door"); 
   countface=0; //얼굴인식 성공횟수 초기화
@@ -53,19 +62,24 @@ void success(){ //보안요구 만족시 5초간 문 개방 후 잠금
   turn_left();
 }
 
-void fail(){ //키패드 입력 실패시 도어락 잠금 및 아래 문구 출력
+//------------------------------------보안요구 만족 실패시 작동
+//키패드 입력 실패시 도어락 잠금 및 아래 문구 출력
+void fail(){ 
   turn_left();
   Serial.println("Please try again");
   Serial.println("Close the door");
 }
 
+//------------------------------------키패드 초기화시 작동
 void reset(){//#입력시 키패드입력 부분 초기화되서 키패드를 다시누르는 상황 만듬
   tru=0;
   count=0;
   Serial.println("Passward reset");
 }
 
-void bt(){ //블루투스 입력 함수, 블루투스 신호중 알맞은 데이터가 들어오면 블루투스 요구조건 만족으로 간주 및 카운트 올림
+//------------------------------------블루투스 동작
+//블루투스 입력 함수, 블루투스 신호중 알맞은 데이터가 들어오면 블루투스 요구조건 만족으로 간주 및 카운트 올림
+void bt(){
   String data; //블루투스 데이터 입력 변수 지정
   if(Blutooth.available()){
     Serial.write(Blutooth.read());
@@ -77,11 +91,11 @@ void bt(){ //블루투스 입력 함수, 블루투스 신호중 알맞은 데이
     }
     else if(data =! 'a'){ //올바른 블루투스 신호가 입력이 되지 않았을 시 아래 문구 출력
       Serial.println("BT not ok");
-      Serial.println("Please try again");
+      fail();
     }
     else{
       Serial.println("BT not ok");
-      Serial.println("Please try again");
+      fail();
     }
   }
   if(Serial.available()){
@@ -90,6 +104,7 @@ void bt(){ //블루투스 입력 함수, 블루투스 신호중 알맞은 데이
   }
 }
 
+//------------------------------------키패드 작동
 void keypad1(){ //키패드 입력 함수
   char key = keypad.getKey();
   if(key){
@@ -118,7 +133,9 @@ void keypad1(){ //키패드 입력 함수
   }
 }
 
-void face(){ //정상 사용자 얼굴이 인식되면 젯슨나노에서 아날로그신호0을 보내줌->카운트 올려서 요구조건 만족된 것으로 간주
+//------------------------------------얼굴인식
+//정상 사용자 얼굴이 인식되면 젯슨나노에서 아날로그신호0을 보내줌->카운트 올려서 요구조건 만족된 것으로 간주
+void face(){ 
   if(analogRead(3) == 0){
     countface++;
     Serial.println("Face recognized");
@@ -128,10 +145,12 @@ void face(){ //정상 사용자 얼굴이 인식되면 젯슨나노에서 아날
   }
 }
 
+//------------------------------------동작 대기
 void Standby(){
   Serial.println("Standby");
 }
 
+//------------------------------------초기 시작
 void setup(){
   Serial.begin(9600);
   Blutooth.begin(9600);
@@ -139,6 +158,7 @@ void setup(){
   turn_left();     //서보 초기각도 0도 설정->도어락잠금으로 시작
 }
 
+//------------------------------------동작 반복
 void loop(){
   keypad1();
   bt();
